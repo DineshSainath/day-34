@@ -1,0 +1,71 @@
+
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100),
+) ENGINE=InnoDB;
+
+CREATE TABLE Instructors (
+    instructor_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    bio TEXT,
+    hire_date DATE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+CREATE TABLE Staff (
+    staff_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    role VARCHAR(50),
+    hire_date DATE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE Courses (
+    course_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    instructor_id INT,
+    FOREIGN KEY (instructor_id) REFERENCES Instructors(instructor_id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE Students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    course_id INT,
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE Lessons (
+    lesson_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT,
+    title VARCHAR(100) NOT NULL,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE Assignments (
+    assignment_id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    due_date TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE Submissions (
+    submission_id INT AUTO_INCREMENT PRIMARY KEY,
+    assignment_id INT,
+    student_id INT,
+    submission_content TEXT,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (assignment_id) REFERENCES Assignments(assignment_id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES Students(student_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
